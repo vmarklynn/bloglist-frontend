@@ -41,6 +41,14 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+    }
+  }, [])
+
 
   /* const handleSubmit = (event) => {
     event.preventDefault()
@@ -53,9 +61,9 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
       setUser(user)
+      window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       setUsername('')
       setPassword('')
-      console.log("success")
     } catch (e) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {

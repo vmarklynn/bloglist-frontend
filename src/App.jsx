@@ -42,23 +42,21 @@ const App = () => {
   }, [])
 
 
-  const handleSubmit = (event) => {
+  /* const handleSubmit = (event) => {
     event.preventDefault()
     console.log(`Logging in with credentials ${username} ${password}`)
-  }
+  } */
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
       const user = await loginService.login({ username, password })
-      console.log(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
       console.log("success")
     } catch (e) {
-      console.log("error?")
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
@@ -68,14 +66,26 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <Login
-        username={username}
-        password={password}
-        setUsername={setUsername}
-        setPassword={setPassword}
-        onSubmit={handleLogin}
-      />
+      <h2>{user ? "Blogs" : "Log In to Application"}</h2>
+      {
+        !user &&
+        <Login
+          username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          onSubmit={handleLogin}
+        />
+      }
+
+      {user &&
+        <div>
+          <p>{user.name} is currently logged in</p>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} />)}
+        </div>
+      }
+
 
     </div>
   )

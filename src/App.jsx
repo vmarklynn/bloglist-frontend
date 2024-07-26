@@ -1,7 +1,16 @@
 import { useState, useEffect } from 'react'
 import loginService from './services/login'
+import './index.css'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
+
+const Alert = ({ text, error }) => {
+  return (
+    <div>
+      <h2 className={error ? "error" : "regular"}>{text}</h2>
+    </div>
+  )
+}
 
 const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
   return (
@@ -60,7 +69,8 @@ const BlogForm = ({ title, author, url, setTitle, setAuthor, setUrl, onSubmit })
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [error, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
@@ -115,6 +125,10 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      setMessage(`A new blog ${createdBlog.title} by ${createdBlog.author} has been added`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     } catch (e) {
       setErrorMessage('Failed to post')
       setTimeout(() => {
@@ -125,6 +139,7 @@ const App = () => {
 
   return (
     <div>
+      <Alert text={error ? error : message} error={error ? true : false} />
       <h2>{user ? "Blogs" : "Log In to Application"}</h2>
       {
         !user &&

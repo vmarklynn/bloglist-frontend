@@ -21,4 +21,4 @@ const createBlog = async newObject => {
   return response.data
 }
 
-export default { getAll, createBlog }
+export default { getAll, createBlog, setToken }

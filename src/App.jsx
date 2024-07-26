@@ -27,26 +27,35 @@ const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
   )
 }
 
-const BlogForm = ({ onSubmit }) => {
-  <div>
-    <form onSubmit={onSubmit}>
-      <label>Username</label>
-      <input
-        type="text"
-        value={username}
-        name="Username"
-        onChange={(event) => setUsername(event.target.value)}
-      />
-      <label>Password</label>
-      <input
-        type="password"
-        value={password}
-        name="Password"
-        onChange={(event) => setPassword(event.target.value)}
-      />
-      <button type="submit">Login</button>
-    </form>
-  </div>
+const BlogForm = ({ title, author, url, setTitle, setAuthor, setUrl, onSubmit }) => {
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <label>Title</label>
+        <input
+          type="text"
+          value={title}
+          name="Title"
+          onChange={(event) => setTitle(event.target.value)}
+        />
+        <label>Author</label>
+        <input
+          type="text"
+          value={author}
+          name="Author"
+          onChange={(event) => setAuthor(event.target.value)}
+        />
+        <label>URL</label>
+        <input
+          type="text"
+          value={url}
+          name="Url"
+          onChange={(event) => setUrl(event.target.value)}
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  )
 }
 
 const App = () => {
@@ -55,6 +64,9 @@ const App = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
+  const [author, setAuthor] = useState('')
+  const [title, setTitle] = useState('')
+  const [url, setUrl] = useState('')
 
 
   useEffect(() => {
@@ -76,8 +88,9 @@ const App = () => {
 
     try {
       const user = await loginService.login({ username, password })
-      setUser(user)
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
       setUsername('')
       setPassword('')
     } catch (e) {
@@ -91,6 +104,23 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogUser')
     setUser(null)
+  }
+
+  const handleBlogSubmit = async (event) => {
+    event.preventDefault()
+
+    try {
+      const createdBlog = await blogService.createBlog({ title, author, url })
+      setBlogs(blogs.concat(createdBlog))
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    } catch (e) {
+      setErrorMessage('Failed to post')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000);
+    }
   }
 
   return (
@@ -117,8 +147,17 @@ const App = () => {
         </div>
       }
 
-
-
+      {user &&
+        <BlogForm
+          author={author}
+          title={title}
+          url={url}
+          setAuthor={setAuthor}
+          setTitle={setTitle}
+          setUrl={setUrl}
+          onSubmit={handleBlogSubmit}
+        />
+      }
     </div>
   )
 }

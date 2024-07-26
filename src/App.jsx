@@ -27,6 +27,28 @@ const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
   )
 }
 
+const BlogForm = ({ onSubmit }) => {
+  <div>
+    <form onSubmit={onSubmit}>
+      <label>Username</label>
+      <input
+        type="text"
+        value={username}
+        name="Username"
+        onChange={(event) => setUsername(event.target.value)}
+      />
+      <label>Password</label>
+      <input
+        type="password"
+        value={password}
+        name="Password"
+        onChange={(event) => setPassword(event.target.value)}
+      />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
@@ -94,6 +116,7 @@ const App = () => {
             <Blog key={blog.id} blog={blog} />)}
         </div>
       }
+
 
 
     </div>

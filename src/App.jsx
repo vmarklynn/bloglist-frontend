@@ -49,12 +49,6 @@ const App = () => {
     }
   }, [])
 
-
-  /* const handleSubmit = (event) => {
-    event.preventDefault()
-    console.log(`Logging in with credentials ${username} ${password}`)
-  } */
-
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -70,6 +64,11 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
     }
+  }
+
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogUser')
+    setUser(null)
   }
 
   return (
@@ -88,7 +87,9 @@ const App = () => {
 
       {user &&
         <div>
-          <p>{user.name} is currently logged in</p>
+          <p>{user.name} is currently logged in
+            {user && <button onClick={handleLogout}>Log out</button>}
+          </p>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />)}
         </div>

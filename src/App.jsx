@@ -32,8 +32,6 @@ const Togglable = (props) => {
         {props.children}
         <button onClick={toggleVisibility}>Close</button>
       </div>
-
-
     </div>
   )
 }
@@ -62,10 +60,27 @@ const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
   )
 }
 
-const BlogForm = ({ title, author, url, setTitle, setAuthor, setUrl, onSubmit }) => {
+const BlogForm = ({ create }) => {
+  const [author, setAuthor] = useState('')
+  const [title, setTitle] = useState('')
+  const [url, setUrl] = useState('')
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const blog = {
+      author: author,
+      title: title,
+      url: url
+    }
+    create(blog)
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+
   return (
     <div>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <label>Title</label>
         <input
           type="text"
@@ -100,9 +115,6 @@ const App = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
-  const [author, setAuthor] = useState('')
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
 
 
   useEffect(() => {
@@ -142,15 +154,10 @@ const App = () => {
     setUser(null)
   }
 
-  const handleBlogSubmit = async (event) => {
-    event.preventDefault()
-
+  const createBlog = async (blogObject) => {
     try {
-      const createdBlog = await blogService.createBlog({ title, author, url })
+      const createdBlog = await blogService.createBlog(blogObject)
       setBlogs(blogs.concat(createdBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
       setMessage(`A new blog ${createdBlog.title} by ${createdBlog.author} has been added`)
       setTimeout(() => {
         setMessage(null)
@@ -191,13 +198,7 @@ const App = () => {
       {user &&
         <Togglable buttonLabel="New Note">
           <BlogForm
-            author={author}
-            title={title}
-            url={url}
-            setAuthor={setAuthor}
-            setTitle={setTitle}
-            setUrl={setUrl}
-            onSubmit={handleBlogSubmit}
+            create={createBlog}
           />
         </Togglable>
       }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import loginService from './services/login'
 import './index.css'
 import Blog from './components/Blog'
@@ -12,7 +12,7 @@ const Alert = ({ show, text, error }) => {
   )
 }
 
-const Togglable = (props) => {
+const Togglable = forwardRef((props, refs) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
@@ -21,6 +21,12 @@ const Togglable = (props) => {
   const toggleVisibility = () => {
     setVisible(!visible)
   }
+
+  useImperativeHandle(refs, () => {
+    return {
+      toggleVisibility
+    }
+  })
 
   return (
     <div>
@@ -34,7 +40,7 @@ const Togglable = (props) => {
       </div>
     </div>
   )
-}
+})
 
 const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
   return (
@@ -72,6 +78,7 @@ const BlogForm = ({ create }) => {
       title: title,
       url: url
     }
+    console.log("Attempting to post")
     create(blog)
     setTitle('')
     setAuthor('')
@@ -116,6 +123,7 @@ const App = () => {
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
 
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -133,7 +141,6 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
@@ -156,6 +163,7 @@ const App = () => {
 
   const createBlog = async (blogObject) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.createBlog(blogObject)
       setBlogs(blogs.concat(createdBlog))
       setMessage(`A new blog ${createdBlog.title} by ${createdBlog.author} has been added`)
@@ -163,7 +171,7 @@ const App = () => {
         setMessage(null)
       }, 5000)
     } catch (e) {
-      setErrorMessage('Failed to post')
+      setErrorMessage('Failed to post blog')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000);
@@ -196,7 +204,7 @@ const App = () => {
       }
 
       {user &&
-        <Togglable buttonLabel="New Note">
+        <Togglable buttonLabel="New Note" ref={blogFormRef}>
           <BlogForm
             create={createBlog}
           />

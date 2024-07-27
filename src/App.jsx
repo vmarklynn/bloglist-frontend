@@ -4,10 +4,36 @@ import './index.css'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 
-const Alert = ({ text, error }) => {
+const Alert = ({ show, text, error }) => {
   return (
     <div>
-      <h2 className={error ? "error" : "regular"}>{text}</h2>
+      {show && <h2 className={error ? "error" : "success"}>{text}</h2>}
+    </div>
+  )
+}
+
+const Togglable = (props) => {
+  const [visible, setVisible] = useState(false)
+
+  const hideWhenVisible = { display: visible ? 'none' : '' }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+
+  const toggleVisibility = () => {
+    setVisible(!visible)
+  }
+
+  return (
+    <div>
+      <div style={hideWhenVisible}>
+        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+      </div>
+
+      <div style={showWhenVisible}>
+        {props.children}
+        <button onClick={toggleVisibility}>Close</button>
+      </div>
+
+
     </div>
   )
 }
@@ -139,7 +165,7 @@ const App = () => {
 
   return (
     <div>
-      <Alert text={error ? error : message} error={error ? true : false} />
+      <Alert show={(error || message) ? true : false} text={error ? error : message} error={error ? true : false} />
       <h2>{user ? "Blogs" : "Log In to Application"}</h2>
       {
         !user &&
@@ -163,15 +189,17 @@ const App = () => {
       }
 
       {user &&
-        <BlogForm
-          author={author}
-          title={title}
-          url={url}
-          setAuthor={setAuthor}
-          setTitle={setTitle}
-          setUrl={setUrl}
-          onSubmit={handleBlogSubmit}
-        />
+        <Togglable buttonLabel="New Note">
+          <BlogForm
+            author={author}
+            title={title}
+            url={url}
+            setAuthor={setAuthor}
+            setTitle={setTitle}
+            setUrl={setUrl}
+            onSubmit={handleBlogSubmit}
+          />
+        </Togglable>
       }
     </div>
   )

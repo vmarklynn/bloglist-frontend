@@ -45,3 +45,27 @@ test('hidden components are shown', async () => {
   const hidden = screen.getByTestId('hidden')
   expect(hidden).toBeDefined()
 })
+
+test('event handlers are called properly', async () => {
+  const blog = {
+    author: 'test',
+    title: 'test',
+    url: 'www.test.com',
+    likes: 0
+  }
+
+  const mockLikeHandler = vi.fn()
+  render(<Blog isCreator={true} blog={blog} onLike={mockLikeHandler} onDelete={vi.fn} />)
+
+  const user = userEvent.setup()
+
+  const toggleButton = screen.getByTestId('toggle')
+  await user.click(toggleButton)
+
+  const likeButton = screen.getByTestId('like')
+
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockLikeHandler.mock.calls).toHaveLength(2)
+})

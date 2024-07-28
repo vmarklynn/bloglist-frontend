@@ -30,9 +30,9 @@ const Blog = ({ blog, isCreator, onLike, onDelete }) => {
 
   return (
     <div style={blogStyle}>
-      <p>{blog.title} - {blog.author} <button onClick={toggleVisibility}>{visible ? 'Hide' : 'View'}</button></p>
+      <p>{blog.title} - {blog.author} <button data-testid="toggle" onClick={toggleVisibility}>{visible ? 'Hide' : 'View'}</button></p>
       {visible &&
-        <div>
+        <div data-testid='hidden'>
           <p>{blog.url}</p>
           <p>{blog.likes} <button onClick={handleLike}>Like</button></p>
           <p>{blog.user ? blog.user.name : ''}</p>
@@ -42,8 +42,5 @@ const Blog = ({ blog, isCreator, onLike, onDelete }) => {
     </div>
   )
 }
-
-
-
 
 export default Blog

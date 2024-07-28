@@ -133,7 +133,6 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
     if (loggedUserJSON) {
-      console.log(loggedUserJSON)
       const user = JSON.parse(loggedUserJSON)
       blogService.setToken(user.token)
       setUser(user)
@@ -171,7 +170,6 @@ const App = () => {
       setBlogs(updatedBlogs)
     } catch (e) {
       setErrorMessage('Failed to Update')
-      console.log(e.response.data.message)
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -180,8 +178,6 @@ const App = () => {
 
   const createBlog = async (blogObject) => {
     try {
-      console.log(user.token)
-      console.log(window.localStorage.getItem('loggedBlogUser'))
       blogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.createBlog(blogObject)
       createdBlog.user = {
@@ -199,6 +195,20 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000);
+    }
+  }
+
+  const handleDelete = async (blogId) => {
+    try {
+      await blogService.deleteBlog(blogId)
+      const newBlogs = blogs.filter(blog => blog.id !== blogId)
+      setBlogs(newBlogs)
+
+    } catch (e) {
+      setErrorMessage('Failed to delete')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
@@ -223,7 +233,7 @@ const App = () => {
             {user && <button onClick={handleLogout}>Log out</button>}
           </p>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} isCreator={user.username === blog.user.username} onLike={handleLike} />)}
+            <Blog key={blog.id} blog={blog} isCreator={user.username === blog.user.username} onLike={handleLike} onDelete={handleDelete} />)}
         </div>
       }
 

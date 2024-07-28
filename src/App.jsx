@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import PropTypes from 'prop-types'
 import loginService from './services/login'
 import './index.css'
 import Blog from './components/Blog'
@@ -7,7 +8,7 @@ import blogService from './services/blogs'
 const Alert = ({ show, text, error }) => {
   return (
     <div>
-      {show && <h2 className={error ? "error" : "success"}>{text}</h2>}
+      {show && <h2 className={error ? 'error' : 'success'}>{text}</h2>}
     </div>
   )
 }
@@ -42,28 +43,42 @@ const Togglable = forwardRef((props, refs) => {
   )
 })
 
+Togglable.displayName = 'Togglable'
+
+Togglable.propTypes = {
+  buttonLabel: PropTypes.string.isRequired
+}
+
 const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
   return (
     <div>
       <form onSubmit={onSubmit}>
         <label>Username</label>
         <input
-          type="text"
+          type='text'
           value={username}
-          name="Username"
+          name='Username'
           onChange={(event) => setUsername(event.target.value)}
         />
         <label>Password</label>
         <input
-          type="password"
+          type='password'
           value={password}
-          name="Password"
+          name='Password'
           onChange={(event) => setPassword(event.target.value)}
         />
-        <button type="submit">Login</button>
+        <button type='submit'>Login</button>
       </form>
     </div>
   )
+}
+
+Login.propTypes = {
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
+  setPassword: PropTypes.func.isRequired,
+  setUsername: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 }
 
 const BlogForm = ({ create }) => {
@@ -114,12 +129,16 @@ const BlogForm = ({ create }) => {
   )
 }
 
+BlogForm.propTypes = {
+  create: PropTypes.func.isRequired
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [error, setErrorMessage] = useState(null)
   const [message, setMessage] = useState(null)
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
@@ -194,7 +213,7 @@ const App = () => {
       setErrorMessage('Failed to post blog')
       setTimeout(() => {
         setErrorMessage(null)
-      }, 5000);
+      }, 5000)
     }
   }
 
@@ -215,7 +234,7 @@ const App = () => {
   return (
     <div>
       <Alert show={(error || message) ? true : false} text={error ? error : message} error={error ? true : false} />
-      <h2>{user ? "Blogs" : "Log In to Application"}</h2>
+      <h2>{user ? 'Blogs' : 'Log In to Application'}</h2>
       {
         !user &&
         <Login

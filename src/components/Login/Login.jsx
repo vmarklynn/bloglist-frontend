@@ -10,6 +10,7 @@ const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
           value={username}
           name='Username'
           onChange={(event) => setUsername(event.target.value)}
+          data-testid='username'
         />
         <label>Password</label>
         <input
@@ -17,6 +18,7 @@ const Login = ({ username, password, setPassword, setUsername, onSubmit }) => {
           value={password}
           name='Password'
           onChange={(event) => setPassword(event.target.value)}
+          data-testid='password'
         />
         <button type='submit'>Login</button>
       </form>

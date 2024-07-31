@@ -34,7 +34,7 @@ const Blog = ({ blog, isCreator, onLike, onDelete }) => {
       {visible &&
         <div data-testid='hidden'>
           <p>{blog.url}</p>
-          <p>{blog.likes} <button data-testid="like" onClick={handleLike}>Like</button></p>
+          <p data-testid='likes'>{blog.likes} <button data-testid="like" onClick={handleLike}>Like</button></p>
           <p>{blog.user ? blog.user.name : ''}</p>
           {isCreator && <button onClick={handleDelete}>Remove</button>}
         </div>
